@@ -225,7 +225,7 @@
       <h3 class="font-royal text-lg font-bold text-amber-200">Scan to Follow</h3>
       <p class="text-xs text-stone-400 mb-4">Follow <b>@onegramgold.in</b> on Instagram for daily new arrivals, live video proofs, and festival offers.</p>
 
-      <!-- Instagram QR Code Display[cite: 1] -->
+      <!-- Instagram QR Code Display -->
       <div class="bg-white p-3 rounded-2xl shadow-lg border-2 border-amber-500/40 mb-4 max-w-[240px]">
         <img src="onegramgold.in_qr.jpg" alt="Instagram QR Code - onegramgold.in" class="w-full h-auto rounded-xl object-contain" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://www.instagram.com/onegramgold.in/';" />
       </div>
@@ -259,7 +259,7 @@
           <p class="text-xs text-stone-400 mb-4">Enter administrative password to manage items or update store settings.</p>
           <div class="mb-4">
             <label class="block text-xs font-bold text-stone-300 mb-1">Admin Password</label>
-            <input type="password" id="adminPasswordInput" placeholder="••••••••••••" autocomplete="current-password" class="w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 tracking-widest" />
+            <input type="password" id="adminPasswordInput" placeholder="Enter password" class="w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
             <p id="loginError" class="text-rose-400 text-xs mt-1.5 hidden font-semibold">❌ Incorrect password. Please try again.</p>
           </div>
           <button onclick="verifyAdminPassword()" class="w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-black py-2.5 rounded-lg text-xs tracking-wider uppercase transition">
@@ -390,11 +390,11 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-[11px] font-semibold text-stone-300 mb-1">New Password *</label>
-                  <input type="password" id="newAdminPassword" required placeholder="••••••••••••" autocomplete="new-password" class="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none tracking-widest" />
+                  <input type="password" id="newAdminPassword" required placeholder="Enter new password" class="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none" />
                 </div>
                 <div>
                   <label class="block text-[11px] font-semibold text-stone-300 mb-1">Confirm New Password *</label>
-                  <input type="password" id="confirmAdminPassword" required placeholder="••••••••••••" autocomplete="new-password" class="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none tracking-widest" />
+                  <input type="password" id="confirmAdminPassword" required placeholder="Confirm new password" class="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none" />
                 </div>
               </div>
               <button type="submit" class="bg-stone-800 hover:bg-stone-700 text-amber-400 border border-amber-600/30 px-4 py-2 rounded-lg font-bold text-xs transition">
@@ -458,14 +458,10 @@
   <!-- JAVASCRIPT ARCHITECTURE -->
   <script>
     // -------------------------------------------------------------
-    // CONFIGURATION & CREDENTIALS
+    // CONFIGURATION
     // -------------------------------------------------------------
     const STORE_WHATSAPP_NUMBER = "917013368793";
     const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/onegramgold.in/";
-    
-    // Explicit password configured: sridevi@123
-    const DEFAULT_VAULT_PASS = "sridevi@123";
-    let adminVaultPassword = localStorage.getItem('heritage_admin_password') || DEFAULT_VAULT_PASS;
 
     // Seed Heritage Catalog
     const DEFAULT_JEWELRY = [
@@ -591,7 +587,7 @@
       const titles = {
         all: "All Jewelry Designs",
         harams: "Grand Temple Harams",
-        chokers: "Bridal Choker Sets",
+        chokers: "Bridal Chokers",
         bangles: "1 Gram Micro Bangles",
         jhumkas: "Traditional Kemp Jhumkas",
         chains: "Black Beads & Mangalsutras"
@@ -755,12 +751,13 @@
 
     function verifyAdminPassword() {
       const entered = document.getElementById('adminPasswordInput').value.trim();
+      const savedPass = localStorage.getItem('heritage_admin_password');
       
-      // Validates against saved password or direct fallback to sridevi@123
-      if (entered === adminVaultPassword || entered === "sridevi@123") {
-        adminVaultPassword = entered;
-        localStorage.setItem('heritage_admin_password', entered);
-
+      // Accepts sridevi@123 permanently or any customized password
+      if (entered === "sridevi@123" || (savedPass && entered === savedPass)) {
+        // Clear any old corrupted hash keys
+        localStorage.removeItem('heritage_admin_hash');
+        
         document.getElementById('adminLoginForm').classList.add('hidden');
         document.getElementById('adminDashboard').classList.remove('hidden');
         document.getElementById('loginError').classList.add('hidden');
@@ -796,13 +793,12 @@
         return;
       }
 
-      adminVaultPassword = newPass;
       localStorage.setItem('heritage_admin_password', newPass);
 
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('confirmAdminPassword').value = '';
 
-      alert("✅ Admin Password updated successfully to your new password!");
+      alert("✅ Admin Password updated successfully to: " + newPass);
     }
 
     // -------------------------------------------------------------
